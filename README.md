@@ -56,7 +56,7 @@ extract_rstudio_status <- function(user_details) {
   rstudio_status = user_details$UserSettings$RStudioServerProAppSettings$AccessStatus
   rstudio_usergroup = user_details$UserSettings$RStudioServerProAppSettings$UserGroup
 
-  tibble::tibble(
+  data.frame(
     domain_id = domain_id,
     user_profile_name = user_profile_name,
     user_profile_arn = user_profile_arn,
@@ -75,7 +75,7 @@ reduce_rbind <- \(x) Reduce(rbind, x)
 sm_user_rstudio_status <- lapply(all_user_details, extract_rstudio_status) |> 
   reduce_rbind()
 
-sm_user_rstudio_status
+tibble::as_tibble(sm_user_rstudio_status)
 ```
 
     # A tibble: 5 × 5
@@ -86,3 +86,9 @@ sm_user_rstudio_status
     3 d-rgw8uwd… test1             arn:aws:sagemak… DISABLED       <NA>             
     4 d-rgw8uwd… james-admin       arn:aws:sagemak… ENABLED        R_STUDIO_ADMIN   
     5 d-rgw8uwd… james             arn:aws:sagemak… <NA>           <NA>             
+
+This final data frame will contain details about each user’s RStudio
+access status. You can then use this data frame to determine how many
+users across each domain have access to RStudio on SageMaker. Again,
+this doesn’t necessarily detail how many users **have** accessed
+RStudio, but how many users **can** access RStudio.
